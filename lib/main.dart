@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:future_concepts_tutorial/network_exception.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,10 +43,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<int> delayIncrementedValue(int counter) {
-    return Future.delayed(const Duration(seconds: 5), () {
+    return Future.delayed(const Duration(seconds: 1), () {
       throw Exception('Something went wrong');
       // return counter + 1;
     });
+  }
+
+  Future<void> callMethod() async {
+    try {
+      await delayIncrementedValue(20);
+    } on NetworkException {
+      log('NetworkException');
+    } catch (exception, stackTrace) {
+      log('$exception $stackTrace');
+    } finally {
+      log('Finally');
+    }
   }
 
   @override
@@ -85,7 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          callMethod();
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
